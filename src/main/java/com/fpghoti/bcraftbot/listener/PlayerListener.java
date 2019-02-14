@@ -24,9 +24,7 @@ public class PlayerListener implements Listener {
 	@EventHandler
 	public void onPlayerLogin(PlayerLoginEvent event){
 		Player player = event.getPlayer();
-		if(!plugin.isMember(player)) {
-			event.disallow(Result.KICK_OTHER, plugin.getKickMessage());
-		}else {
+		if(plugin.isMember(player) || plugin.isExempt(player.getName())) {
 			if(plugin.assignRole()) {
 				for(Guild guild : plugin.getBot().getJDA().getGuilds()) {
 
@@ -44,9 +42,10 @@ public class PlayerListener implements Listener {
 						guild.getController().addRolesToMember(mem, role).queue();
 					}
 
-
 				}
 			}
+		}else {
+			event.disallow(Result.KICK_OTHER, plugin.getKickMessage());
 		}
 	}
 
