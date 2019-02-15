@@ -38,6 +38,7 @@ public class ServerBot {
 			jda.addEventListener(new BotListener(this));
 			jda.setAutoReconnect(true);
 			String link = "https://discordapp.com/oauth2/authorize?&client_id=" + jda.getSelfUser().getId();
+			link = link + "&scope=bot&permissions=8";
 			plugin.log(Level.INFO, "Connection successful!");
 			plugin.log(Level.INFO, "You can add this bot to Discord using this link: ");
 			plugin.log(Level.INFO, link);
@@ -82,7 +83,6 @@ public class ServerBot {
 		return jda;
 	}
 
-	
 	public void shutDown(){
 		jda.shutdown();
 	}

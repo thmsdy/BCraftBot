@@ -27,7 +27,10 @@ public class AddMeCommand implements Command{
 	public void action(String[] args, MessageReceivedEvent event) {
 		if(args.length == 1) {
 			String name = args[0].toLowerCase();
-			bot.log(Level.INFO, event.getAuthor().getName() + " issued a Discord Bot command: -addme " + name);
+			if(name.length() > 16) {
+				return;
+			}
+			bot.log(Level.INFO, event.getAuthor().getName() + " issued a Discord Bot command: !addme " + name);
 			if(bot.getSQL().itemExists("DiscordID", event.getAuthor().getId(), bot.getTableName())) {
 				bot.getSQL().set("MinecraftName", name, "DiscordID", "=", event.getAuthor().getId(), bot.getTableName());
 			}else {

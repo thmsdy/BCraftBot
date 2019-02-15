@@ -38,6 +38,9 @@ public class AddExempt implements CommandExecutor{
 				}
 			}
 			String name = args[0];
+			if(name.length() > 16) {
+				return true;
+			}
 			plugin.addExempt(name);
 			if(sender instanceof Player) {
 				((Player)sender).sendMessage(ChatColor.GREEN + "[BCraftBot] Player added to the exempt list!");

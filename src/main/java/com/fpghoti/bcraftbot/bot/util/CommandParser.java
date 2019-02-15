@@ -8,7 +8,7 @@ public class CommandParser {
 	public CommandContainer parse(String rw, MessageReceivedEvent e){
 		ArrayList<String> split = new ArrayList<String>();
 		String raw = rw;
-		String fixed = raw.replaceFirst("-", "");
+		String fixed = raw.replaceFirst("!", "");
 		String[] splitf = fixed.split(" ");
 		for(String s: splitf){
 			split.add(s);

@@ -52,7 +52,7 @@ public class Main extends JavaPlugin {
 		sql.connect();
 		if(!sql.tableExists(sqltable)){
 			log(Level.INFO, "Table not found. Creating new table...");
-			sql.update("CREATE TABLE " + sqltable + " (DiscordID NOT NULL CHAR(18), MinecraftName VARCHAR(16), UUID CHAR(36), PRIMARY KEY (DiscordID);");
+			sql.update("CREATE TABLE " + sqltable + " (DiscordID CHAR(18), MinecraftName VARCHAR(16), UUID CHAR(36), PRIMARY KEY (DiscordID));");
 			log(Level.INFO, "Table created!");
 		}
 		startReconnect();
@@ -180,7 +180,7 @@ public class Main extends JavaPlugin {
 	public ServerBot getBot() {
 		return bot;
 	}
-	
+
 	public boolean isExempt(String name) {
 		for(String item: exempt) {
 			if(item.equalsIgnoreCase(name)) {
@@ -189,15 +189,15 @@ public class Main extends JavaPlugin {
 		}
 		return false;
 	}
-	
+
 	public boolean assignRole() {
 		return assignrole;
 	}
-	
+
 	public String getAssignRoleName() {
 		return rolename;
 	}
-	
+
 	public String getKickMessage() {
 		return kickmsg;
 	}
@@ -213,56 +213,63 @@ public class Main extends JavaPlugin {
 	public boolean isMember(Player p) {
 		String name = p.getName().toLowerCase();
 		ArrayList<String> ids = new ArrayList<String>();
-		ResultSet rs = sql.query("SELECT * FROM " + sqltable + " WHERE MinecraftName = " + name.toLowerCase());
-		try {
-			while (rs.next()) {
-				ids.add(rs.getString("DiscordID"));
+		ResultSet rs;
+		if(sql.itemExists("MinecraftName", name, sqltable)) {
+			rs = sql.query("SELECT * FROM " + sqltable + " HAVING MinecraftName = " + "\'" + name.toLowerCase() + "\';");
+			try {
+				while (rs.next()) {
+					String tempid = rs.getString("DiscordID");
+					ids.add(tempid);
+				}
+			} catch (SQLException e) {
+				log(Level.SEVERE, "Error getting Discord IDs from database!");
+				e.printStackTrace();
 			}
-		} catch (SQLException e) {
-			log(Level.SEVERE, "Error getting Discord IDs from database!");
-			e.printStackTrace();
-		}
-		for(String id : ids) {
-			User user = bot.getJDA().getUserById(id);
-			if(user != null) {
-				for(Guild guild : bot.getJDA().getGuilds()) {
-					if(guild.isMember(user)) {
-						return true;
+			for(String id : ids) {
+				User user = bot.getJDA().getUserById(id);
+				if(user != null) {
+					for(Guild guild : bot.getJDA().getGuilds()) {
+						if(guild.isMember(user)) {
+							String uuid = p.getUniqueId().toString();
+							sql.update("UPDATE " + sqltable + " SET UUID = " + "\'" + uuid  + "\'" + " WHERE DiscordID = "  + "\'" + id  + "\';");
+							return true;
+						}
 					}
 				}
 			}
 		}
 
 		String uuid = p.getUniqueId().toString();
-		ids = new ArrayList<String>();
-		rs = sql.query("SELECT * FROM " + sqltable + " WHERE UUID = " + uuid);
-		try {
-			while (rs.next()) {
-				ids.add(rs.getString("DiscordID"));
+		if(sql.itemExists("UUID", uuid, sqltable)) {
+			ids = new ArrayList<String>();
+			rs = sql.query("SELECT * FROM " + sqltable + " WHERE UUID = " + "\'" + uuid + "\';");
+			try {
+				while (rs.next()) {
+					ids.add(rs.getString("DiscordID"));
+				}
+			} catch (SQLException e) {
+				log(Level.SEVERE, "Error getting Discord IDs from database!");
+				e.printStackTrace();
 			}
-		} catch (SQLException e) {
-			log(Level.SEVERE, "Error getting Discord IDs from database!");
-			e.printStackTrace();
-		}
-		for(String id : ids) {
-			User user = bot.getJDA().getUserById(id);
-			if(user != null) {
-				for(Guild guild : bot.getJDA().getGuilds()) {
-					if(guild.isMember(user)) {
-						sql.update("UPDATE " + sqltable + " SET MinecraftName = " + p.getName().toLowerCase() + " WHERE DiscordID = " + id + ";");
-						return true;
+			for(String id : ids) {
+				User user = bot.getJDA().getUserById(id);
+				if(user != null) {
+					for(Guild guild : bot.getJDA().getGuilds()) {
+						if(guild.isMember(user)) {
+							sql.update("UPDATE " + sqltable + " SET MinecraftName = " + "\'" + p.getName().toLowerCase()  + "\'" + " WHERE DiscordID = "  + "\'" + id  + "\';");
+							return true;
+						}
 					}
 				}
 			}
 		}
-
 		return false;
 	}
-	
+
 	public User getDiscordUser(Player p) {
 		String name = p.getName().toLowerCase();
 		ArrayList<String> ids = new ArrayList<String>();
-		ResultSet rs = sql.query("SELECT * FROM " + sqltable + " WHERE MinecraftName = " + name.toLowerCase());
+		ResultSet rs = sql.query("SELECT * FROM " + sqltable + " HAVING MinecraftName = " + "\'" + name.toLowerCase() + "\';");
 		try {
 			while (rs.next()) {
 				ids.add(rs.getString("DiscordID"));
@@ -283,5 +290,5 @@ public class Main extends JavaPlugin {
 		}
 		return null;
 	}
-	
+
 }

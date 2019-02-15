@@ -24,29 +24,33 @@ public class PlayerListener implements Listener {
 	@EventHandler
 	public void onPlayerLogin(PlayerLoginEvent event){
 		Player player = event.getPlayer();
-		if(plugin.isMember(player) || plugin.isExempt(player.getName())) {
-			if(plugin.assignRole()) {
-				for(Guild guild : plugin.getBot().getJDA().getGuilds()) {
 
-					Role role = null;
-					for(Role r : guild.getRoles()) {
-						if(r.getName().equalsIgnoreCase(plugin.getAssignRoleName())) {
-							role = r;
-						}
-					}
-
-					User user = plugin.getDiscordUser(player);
-					Member mem = guild.getMember(user);
-
-					if(user != null && user.getMutualGuilds().contains(guild) && role != null) {
-						guild.getController().addRolesToMember(mem, role).queue();
-					}
-
-				}
-			}
-		}else {
+		if(!plugin.isMember(player) && !plugin.isExempt(player.getName())) {
 			event.disallow(Result.KICK_OTHER, plugin.getKickMessage());
+			return;
+		}
+		if(plugin.assignRole() && !plugin.isExempt(player.getName())) {
+
+
+			for(Guild guild : plugin.getBot().getJDA().getGuilds()) {
+
+				Role role = null;
+				for(Role r : guild.getRoles()) {
+					if(r.getName().equalsIgnoreCase(plugin.getAssignRoleName())) {
+						role = r;
+					}
+				}
+
+				User user = plugin.getDiscordUser(player);
+				Member mem = guild.getMember(user);
+
+				if(user != null && user.getMutualGuilds().contains(guild) && role != null) {
+					guild.getController().addRolesToMember(mem, role).queue();
+				}
+
+			}
 		}
 	}
 
+	
 }
