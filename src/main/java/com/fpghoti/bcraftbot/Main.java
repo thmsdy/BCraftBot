@@ -22,6 +22,7 @@ import net.dv8tion.jda.core.entities.User;
 public class Main extends JavaPlugin {
 
 	private String sqlhost;
+	private String sqlport;
 	private String sqluser;
 	private String sqldatabase;
 	private String sqlpassword;
@@ -48,7 +49,7 @@ public class Main extends JavaPlugin {
 		messageSet();
 		getSettings();
 		getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
-		sql = new MySQLConnection(this,sqlhost,sqluser,sqlpassword,sqldatabase);
+		sql = new MySQLConnection(this,sqlhost,sqlport,sqluser,sqlpassword,sqldatabase);
 		sql.connect();
 		if(!sql.tableExists(sqltable)){
 			log(Level.INFO, "Table not found. Creating new table...");
@@ -99,6 +100,10 @@ public class Main extends JavaPlugin {
 			config.createSection("Host");
 			config.set("Host", "0.0.0.0");
 		}
+		if (config.get("Port") == null){
+			config.createSection("Port");
+			config.set("Port", "3306");
+		}
 		if (config.get("User") == null){
 			config.createSection("User");
 			config.set("User", "username");
@@ -144,6 +149,7 @@ public class Main extends JavaPlugin {
 
 	public void getSettings(){
 		sqlhost = config.getString("Host");
+		sqlport = config.getString("Port");
 		sqluser = config.getString("User");
 		sqlpassword = config.getString("Password");
 		sqldatabase = config.getString("Database");

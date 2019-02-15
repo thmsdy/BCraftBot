@@ -15,13 +15,15 @@ public class MySQLConnection{
 	private Connection connection;
 	
 	private String host;
+	private String port;
 	private String user;
 	private String password;
 	private String database;
 	
-	public MySQLConnection(Main plugin, String sqlhost, String sqluser, String sqlpassword, String sqldatabase) {
+	public MySQLConnection(Main plugin, String sqlhost, String sqlport, String sqluser, String sqlpassword, String sqldatabase) {
 		this.plugin = plugin;
 		this.host = sqlhost;
+		this.port = sqlport;
 		this.user = sqluser;
 		this.password = sqlpassword;
 		this.database = sqldatabase;
@@ -75,7 +77,7 @@ public class MySQLConnection{
 		catch (Exception e){}
 		connection = null;
 		try{
-			connection = DriverManager.getConnection("jdbc:mysql://" + host + ":3306/" + database, user, password);
+			connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + database, user, password);
 		}
 		catch (Exception e){
 			plugin.log(Level.SEVERE, "There was an issue with MySQL: " + e.getMessage());

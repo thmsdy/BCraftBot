@@ -36,6 +36,7 @@ public class AddMeCommand implements Command{
 			}else {
 				bot.getSQL().update("INSERT INTO " + bot.getTableName() + " (DiscordID,MinecraftName) VALUES (\'" + event.getAuthor().getId() + "\',\'" + name + "\');");
 			}
+			event.getChannel().sendMessage("Updating Minecraft user database with username **" + args[0] + "**.").queue();
 		}
 
 	}
