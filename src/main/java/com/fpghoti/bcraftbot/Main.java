@@ -30,9 +30,11 @@ public class Main extends JavaPlugin {
 	private String bottoken;
 	private String kickmsg;
 	private String rolename;
+	private String requiredrole;
 
 	private boolean stopTimer = false;
-	private boolean assignrole;
+	private boolean assignrole = false;
+	private boolean checkrole = false;
 
 	private int mysqlTimer = 1140;
 
@@ -63,7 +65,24 @@ public class Main extends JavaPlugin {
 	}
 
 	public void onDisable() {
-		bot.shutDown();
+		try {
+			
+			bot.shutDown();
+			
+		}catch(NoClassDefFoundError e) {
+			
+			// This Should only be an issue when the user replaces the .jar file before shutting the server down.
+			// The reason for catching this is to provide information to the user.
+			
+			log(Level.WARNING, "The plugin .jar file has been removed or replaced since the plugin has been loaded! Everything MIGHT work just fine, but this is not encouraged, and you will not get support for any issues that come from this.");
+		}
+		long initial = System.currentTimeMillis();
+		
+		//Give bot enough time to shut down
+		while(true) {
+		       long current =  System.currentTimeMillis();
+		       if(current - initial >= 1000) break;
+		}
 		stopTimer = true;
 		sql.disconnect();
 	}
@@ -96,6 +115,7 @@ public class Main extends JavaPlugin {
 	FileConfiguration config = this.getConfig();
 
 	public void messageSet(){
+		config.options().header("If CheckRole is true, users will need the Discord role listed in RequiredRole to join the server. AssignRole tells the bot whether or not it should give users the role specified in RoleName upon joining the server.\nIf you wish to limit the bot commands to a specific channel, edit its permissions accordingly.");
 		if (config.get("Host") == null){
 			config.createSection("Host");
 			config.set("Host", "0.0.0.0");
@@ -123,6 +143,14 @@ public class Main extends JavaPlugin {
 		if (config.get("Bot-Token") == null){
 			config.createSection("Bot-Token");
 			config.set("Bot-Token", "inserttokenhere");
+		}
+		if (config.get("CheckRole") == null){
+			config.createSection("CheckRole");
+			config.set("CheckRole", false);
+		}
+		if (config.get("RequiredRole") == null){
+			config.createSection("RequiredRole");
+			config.set("RequiredRole", "Whitelisted");
 		}
 		if (config.get("ExemptUsernames") == null){
 			config.createSection("ExemptUsernames");
@@ -155,6 +183,8 @@ public class Main extends JavaPlugin {
 		sqldatabase = config.getString("Database");
 		sqltable = config.getString("TableName");
 		bottoken = config.getString("Bot-Token");
+		checkrole = config.getBoolean("CheckRole");
+		requiredrole = config.getString("RequiredRole");
 		setExemptList(config.getString("ExemptUsernames"));
 		kickmsg = config.getString("KickMessage");
 		assignrole = config.getBoolean("AssignRole");
@@ -166,10 +196,14 @@ public class Main extends JavaPlugin {
 		for(String item: s.split(",")) {
 			exempt.add(item);
 		}
-	}
+	} 	
 
 	public String getTableName() {
 		return sqltable;
+	}
+
+	public boolean checkRole() {
+		return checkrole;
 	}
 
 	public void addExempt(String username) {
@@ -270,6 +304,10 @@ public class Main extends JavaPlugin {
 			}
 		}
 		return false;
+	}
+
+	public String getRequiredRole() {
+		return requiredrole;
 	}
 
 	public User getDiscordUser(Player p) {

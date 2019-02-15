@@ -84,7 +84,7 @@ public class ServerBot {
 	}
 
 	public void shutDown(){
-		jda.shutdown();
+		jda.shutdownNow();
 	}
 	
 }
