@@ -25,40 +25,47 @@ public class PlayerListener implements Listener {
 	public void onPlayerLogin(PlayerLoginEvent event){
 		Player player = event.getPlayer();
 
+		if(player.hasPermission("bcraftbot.bypasscheck")) {
+			return;
+		}
+		
 		if(!plugin.isMember(player) && !plugin.isExempt(player.getName())) {
 			event.disallow(Result.KICK_OTHER, plugin.getKickMessage());
 			return;
 		}
-		
+
 		if(plugin.checkRole()  && !plugin.isExempt(player.getName())) {
 			boolean allow = false;
+			
 			for(Guild guild : plugin.getBot().getJDA().getGuilds()) {
 
-				Role role = null;
-				for(Role r : guild.getRoles()) {
-					if(r.getName().equalsIgnoreCase(plugin.getRequiredRole())) {
-						role = r;
+				for(String rolename : plugin.getRequiredRole().split(",")) {
+
+					Role role = null;
+					for(Role r : guild.getRoles()) {
+						if(r.getName().equalsIgnoreCase(rolename)) {
+							role = r;
+						}
+					}
+
+					User user = plugin.getDiscordUser(player);
+					Member mem = guild.getMember(user);
+
+					if(user != null && user.getMutualGuilds().contains(guild) && role != null) {
+						if(mem.getRoles().contains(role)) {
+							allow = true;
+						}
 					}
 				}
-
-				User user = plugin.getDiscordUser(player);
-				Member mem = guild.getMember(user);
-
-				if(user != null && user.getMutualGuilds().contains(guild) && role != null) {
-					if(mem.getRoles().contains(role)) {
-						allow = true;
-					}
-				}
-
 			}
-			
+
 			if(!allow) {
 				event.disallow(Result.KICK_OTHER, plugin.getKickMessage());
 				return;
 			}
-			
+
 		}
-		
+
 		if(plugin.assignRole() && !plugin.isExempt(player.getName())) {
 			for(Guild guild : plugin.getBot().getJDA().getGuilds()) {
 
@@ -80,5 +87,5 @@ public class PlayerListener implements Listener {
 		}
 	}
 
-	
+
 }

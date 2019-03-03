@@ -31,12 +31,20 @@ public class AddMeCommand implements Command{
 				return;
 			}
 			bot.log(Level.INFO, event.getAuthor().getName() + " issued a Discord Bot command: !addme " + name);
-			if(bot.getSQL().itemExists("DiscordID", event.getAuthor().getId(), bot.getTableName())) {
-				bot.getSQL().set("MinecraftName", name, "DiscordID", "=", event.getAuthor().getId(), bot.getTableName());
-			}else {
-				bot.getSQL().update("INSERT INTO " + bot.getTableName() + " (DiscordID,MinecraftName) VALUES (\'" + event.getAuthor().getId() + "\',\'" + name + "\');");
+
+			if(bot.getPlugin().mainRecordKeeper()) {
+
+				if(bot.getSQL().itemExists("DiscordID", event.getAuthor().getId(), bot.getTableName())) {
+					bot.getSQL().set("MinecraftName", name, "DiscordID", "=", event.getAuthor().getId(), bot.getTableName());
+				}else {
+					bot.getSQL().update("INSERT INTO " + bot.getTableName() + " (DiscordID,MinecraftName) VALUES (\'" + event.getAuthor().getId() + "\',\'" + name + "\');");
+				}
+
 			}
-			event.getChannel().sendMessage("Updating Minecraft user database with username **" + args[0] + "**.").queue();
+
+			if(bot.getPlugin().outputToDiscord()) {
+				event.getChannel().sendMessage("Updating Minecraft user database with username **" + args[0] + "**.").queue();
+			}
 		}
 
 	}

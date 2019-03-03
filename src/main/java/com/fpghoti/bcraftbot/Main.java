@@ -35,6 +35,9 @@ public class Main extends JavaPlugin {
 	private boolean stopTimer = false;
 	private boolean assignrole = false;
 	private boolean checkrole = false;
+	private boolean outputtodiscord = false;
+	private boolean mainrecordkeeper = false;
+	
 
 	private int mysqlTimer = 1140;
 
@@ -115,7 +118,7 @@ public class Main extends JavaPlugin {
 	FileConfiguration config = this.getConfig();
 
 	public void messageSet(){
-		config.options().header("If CheckRole is true, users will need the Discord role listed in RequiredRole to join the server. AssignRole tells the bot whether or not it should give users the role specified in RoleName upon joining the server.\nIf you wish to limit the bot commands to a specific channel, edit its permissions accordingly.");
+		config.options().header("If CheckRole is true, users will need the Discord role listed in RequiredRole to join the server. AssignRole tells the bot whether or not it should give users the role specified in RoleName upon joining the server.\nIf you wish to limit the bot commands to a specific channel, edit its permissions accordingly.\nMainRecordKeeper tells the bot if it is the main record keeper. If you are using the same database for multiple servers, you will only want one bot to insert new users into the database.");
 		if (config.get("Host") == null){
 			config.createSection("Host");
 			config.set("Host", "0.0.0.0");
@@ -172,6 +175,14 @@ public class Main extends JavaPlugin {
 			config.createSection("RoleName");
 			config.set("RoleName", "Craftee");
 		}
+		if (config.get("OutputToDiscord") == null){
+			config.createSection("OutputToDiscord");
+			config.set("OutputToDiscord", true);
+		}
+		if (config.get("MainRecordKeeper") == null){
+			config.createSection("MainRecordKeeper");
+			config.set("MainRecordKeeper", true);
+		}
 		this.saveConfig();
 	}
 
@@ -189,6 +200,8 @@ public class Main extends JavaPlugin {
 		kickmsg = config.getString("KickMessage");
 		assignrole = config.getBoolean("AssignRole");
 		rolename = config.getString("RoleName");
+		outputtodiscord = config.getBoolean("OutputToDiscord");
+		mainrecordkeeper = config.getBoolean("MainRecordKeeper");
 	}
 
 	public void setExemptList(String s) {
@@ -250,6 +263,14 @@ public class Main extends JavaPlugin {
 		return sql;
 	}
 
+	public boolean outputToDiscord() {
+		return outputtodiscord;
+	}
+	
+	public boolean mainRecordKeeper() {
+		return mainrecordkeeper;
+	}
+	
 	public boolean isMember(Player p) {
 		String name = p.getName().toLowerCase();
 		ArrayList<String> ids = new ArrayList<String>();

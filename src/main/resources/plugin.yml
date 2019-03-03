@@ -1,5 +1,5 @@
 main: com.fpghoti.bcraftbot.Main
-version: 1.0
+version: 1.1
 api-version: 1.13
 name: BCraftBot
 descripion: Discord-based whitelisting system for Minecraft

@@ -87,4 +87,8 @@ public class ServerBot {
 		jda.shutdownNow();
 	}
 	
+	public Main getPlugin() {
+		return plugin;
+	}
+	
 }
