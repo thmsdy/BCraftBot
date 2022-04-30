@@ -13,11 +13,12 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.fpghoti.bcraftbot.bot.ServerBot;
 import com.fpghoti.bcraftbot.command.AddExempt;
+import com.fpghoti.bcraftbot.command.BCWhitelist;
 import com.fpghoti.bcraftbot.listener.PlayerListener;
 import com.fpghoti.bcraftbot.sql.MySQLConnection;
 
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.User;
 
 public class Main extends JavaPlugin {
 
@@ -65,6 +66,7 @@ public class Main extends JavaPlugin {
 		bot = new ServerBot(this);
 		bot.runBot();
 		getCommand("AddExempt").setExecutor(new AddExempt(this));
+		getCommand("BCWhitelist").setExecutor(new BCWhitelist(this));
 	}
 
 	public void onDisable() {
@@ -183,6 +185,10 @@ public class Main extends JavaPlugin {
 			config.createSection("MainRecordKeeper");
 			config.set("MainRecordKeeper", true);
 		}
+		if (config.get("Whitelist") == null){
+			config.createSection("Whitelist");
+			config.set("Whitelist", true);
+		}
 		this.saveConfig();
 	}
 
@@ -228,6 +234,22 @@ public class Main extends JavaPlugin {
 			log.severe("BCraftBot failed to update the exempt user config!");
 		}
 		setExemptList(updated);
+	}
+	
+	public void setBCWhitelist(Boolean b) {
+		if (config.get("Whitelist") != null){
+			config.set("Whitelist", b);
+			this.saveConfig();
+		}else {
+			log.severe("BCraftBot failed to update the whitelist in the config!");
+		}
+	}
+	
+	public boolean getBCWhitelist() {
+		if (config.get("Whitelist") != null){
+			return config.getBoolean("Whitelist");
+		}
+		return false;
 	}
 
 	public ServerBot getBot() {

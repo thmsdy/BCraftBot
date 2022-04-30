@@ -4,21 +4,23 @@ import java.util.HashMap;
 import java.util.logging.Level;
 
 import com.fpghoti.bcraftbot.Main;
-import com.fpghoti.bcraftbot.bot.BotListener;
-import com.fpghoti.bcraftbot.bot.Command;
 import com.fpghoti.bcraftbot.bot.command.AddMeCommand;
 import com.fpghoti.bcraftbot.bot.util.CommandParser;
 import com.fpghoti.bcraftbot.sql.MySQLConnection;
 
-import net.dv8tion.jda.core.AccountType;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.JDABuilder;
+import net.dv8tion.jda.api.JDA;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
+import net.dv8tion.jda.api.sharding.ShardManager;
+import net.dv8tion.jda.api.utils.ChunkingFilter;
+import net.dv8tion.jda.api.utils.MemberCachePolicy;
 
 public class ServerBot {
 	
 	private Main plugin;
 	
 	private JDA jda;
+	private static ShardManager shardm;
 	
 	private CommandParser parser;
 	
@@ -34,7 +36,19 @@ public class ServerBot {
 		String token = plugin.getBotToken();
 		plugin.log(Level.INFO, "Connecting bot to Discord...");
 		try{
-			jda = new JDABuilder(AccountType.BOT).setToken(token).buildBlocking();
+			shardm = DefaultShardManagerBuilder.createDefault(token)
+					.setChunkingFilter(ChunkingFilter.ALL)
+					.setMemberCachePolicy(MemberCachePolicy.ALL)
+					.enableIntents(GatewayIntent.getIntents(GatewayIntent.DEFAULT))
+					.enableIntents(GatewayIntent.GUILD_MEMBERS)
+					.enableIntents(GatewayIntent.GUILD_MESSAGES)
+					.build();
+			jda = shardm.getShardById(0);
+			try {
+				jda.awaitReady();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			jda.addEventListener(new BotListener(this));
 			jda.setAutoReconnect(true);
 			String link = "https://discordapp.com/oauth2/authorize?&client_id=" + jda.getSelfUser().getId();

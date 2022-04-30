@@ -1,5 +1,5 @@
 main: com.fpghoti.bcraftbot.Main
-version: 1.1
+version: 1.2
 api-version: 1.13
 name: BCraftBot
 descripion: Discord-based whitelisting system for Minecraft
@@ -8,3 +8,6 @@ commands:
   AddExempt:
     description: Add a player to the exempt list. Exempted users are permanently allowed to join, as long as they remain in the exempted list.
     usage: /addexempt <username>
+  BCWhitelist:
+    description: Toggles plugin whitelist.
+    usage: /bcwhitelist <on/off>

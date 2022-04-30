@@ -32,7 +32,7 @@ public class AddExempt implements CommandExecutor{
 				}
 			}else {
 				if(args.length != 1) {
-					plugin.log(Level.INFO, "Usage: addexempt <username>");
+					plugin.log(Level.INFO, "Usage: /addexempt <username>");
 					plugin.log(Level.INFO, "There was an issue with your syntax.");
 					return true;
 				}

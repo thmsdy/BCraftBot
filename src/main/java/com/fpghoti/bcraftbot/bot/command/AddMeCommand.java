@@ -5,7 +5,7 @@ import java.util.logging.Level;
 import com.fpghoti.bcraftbot.bot.Command;
 import com.fpghoti.bcraftbot.bot.ServerBot;
 
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class AddMeCommand implements Command{
 
@@ -19,7 +19,6 @@ public class AddMeCommand implements Command{
 
 	@Override
 	public boolean called(String[] args, MessageReceivedEvent event) {
-
 		return true;
 	}
 

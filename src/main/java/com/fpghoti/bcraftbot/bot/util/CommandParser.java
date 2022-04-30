@@ -2,7 +2,7 @@ package com.fpghoti.bcraftbot.bot.util;
 
 import java.util.ArrayList;
 
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 public class CommandParser {
 	public CommandContainer parse(String rw, MessageReceivedEvent e){
