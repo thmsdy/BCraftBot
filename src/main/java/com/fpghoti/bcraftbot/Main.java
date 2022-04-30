@@ -39,7 +39,6 @@ public class Main extends JavaPlugin {
 	private boolean outputtodiscord = false;
 	private boolean mainrecordkeeper = false;
 	
-
 	private int mysqlTimer = 1140;
 
 	private ArrayList<String> exempt;
